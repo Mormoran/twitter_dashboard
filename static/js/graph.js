@@ -4,7 +4,7 @@ function getData(screen_name) {
 }
  
 function makeGraphs(error, tweetsJson) {
-    alert(tweetsJson);
+    // alert(tweetsJson);
  
     //Clean projectsJson data
     //Time format in harvested Tweets: Thu Jun 06 10:51:22 +0000 2017
@@ -44,7 +44,36 @@ function makeGraphs(error, tweetsJson) {
 
     //Calculate metrics
     var numTweetsByDate = dateDim.group(); 
-    var numHasHashtag = hasHashtagDim.group(); 
+    var numHasHashtag = hasHashtagDim.group();
+    
+//     var averageTweetsPerDay = dateDim.group().reduce(
+//         function (p, v){
+//             p.total += v['Happiness Score'];
+//             p.count +=1;
+//             if (p.total == 0) {
+//                 p.average = 0;
+//             } else {
+//                 p.average = p.total/p.count;
+//             }
+//             return p;
+//         },
+
+//         function(p, v){
+//             p.total -= v['Happiness Score'];
+//             p.count -= 1;
+//             if (p.count == 0) {
+//                 p.total = 0;
+//                 p.average = 0;
+//             } else {
+//                 p.average = p.total/p.count;
+//             }
+//             return p;
+//         },
+
+//         function() {
+//             return {total:0, count:0, average:0}
+//         } 
+//    )
  
     var all = ndx.groupAll();
  
