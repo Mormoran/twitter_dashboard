@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Twitter Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for ('static', filename='lib/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='lib/css/keen-dashboards.css')}}">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='lib/css/dc.css')}}">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='css/custom.css')}}">
+</head>
+<body class="application">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="./" class="navbar-brand">Twitter Dashboard</a>
+            </div>
+        </div>
+    </div>
+    <div  id="outer" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <form action="get_tweets">
+                    <h1>Enter the twitter handle:</h1>
+                    <input type="text" name="screen_name">
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for ('static', filename='lib/js/jquery.min.js')}}"></script>
+    <script src="{{ url_for ('static', filename='lib/js/bootstrap.min.js')}}"></script>
+</body>
+</html>
