@@ -8,10 +8,7 @@ import tweepy
 import json
 
 #Twitter API credentials
-CONSUMER_KEY = 'xz6iX3TdkL2TFmmrSXvARvJkn'
-CONSUMER_SECRET = '71na1NQVNzwibLQso6S3A1mIxs8LD5Uqzu3me1wCLoTmUFlnva'
-ACCESS_TOKEN = '381284132-3TSKLn9rAixDNYJOEvUQXa46Sww238zkkpvRCBZZ'
-ACCESS_TOKEN_SECRET = 'M1kWjy6Ed8vzqW8g9tGieOecEbGbkxgquKlskdj1dpuMW'
+SECRET
 
 class TwitterHarvester(object):
     """Create a new TwitterHarvester instance"""
