@@ -39,7 +39,11 @@ function makeGraphs(error, tweetsJson) {
 
     var hasHashtagDim = ndx.dimension(function (d) {
         return d["has_hashtags"];
-    }); 
+    });
+
+    var isRetweetDim = ndx.dimension(function (d) {
+        return d["has_hashtags"];
+    });
 
 
     //Calculate metrics
@@ -104,55 +108,97 @@ function makeGraphs(error, tweetsJson) {
     //     .group(totalDonations)
     //     .formatNumber(d3.format(".3s"));
  
-    // timeChart
-    //     .width(1500)
-    //     .height(600)
-    //     .margins({top: 10, right: 50, bottom: 30, left: 50})
-    //     .dimension(dateDim)
-    //     .group(numTweetsByDate)
-    //     .transitionDuration(500)
-    //     .x(d3.time.scale().domain([minDate, maxDate]))
-    //     .elasticY(true)
-    //     .xAxisLabel("Date")
-    //     .yAxisLabel("Daily Tweets")
-    //     .yAxis().ticks(20);
- 
     timeChart
         .width(1500)
         .height(600)
-        .x(d3.time.scale().domain([minDate, maxDate]))
-        .interpolate('step-before')
-        .renderArea(true)
-        .brushOn(false)
-        .renderDataPoints(true)
-        .clipPadding(10)
-        .yAxisLabel("Daily Tweets")
-        .xAxisLabel("Date")
+        .margins({top: 10, right: 50, bottom: 30, left: 50})
         .dimension(dateDim)
         .group(numTweetsByDate)
-        .mouseZoomable(true);
-        // .title(function(d) { return d.key + ': ' + d.text; });
-
-
-    hasHashtagChart
-       .height(220)
-       .radius(90)
-       .transitionDuration(1500)
-       .dimension(hasHashtagDim)
-       .group(numHasHashtag);
-
+        .transitionDuration(500)
+        .x(d3.time.scale().domain([minDate, maxDate]))
+        .elasticY(true)
+        .xAxisLabel("Date")
+        .yAxisLabel("Daily Tweets")
+        .renderDataPoints(true)
+        .elasticY(true)
+        .brushOn(true)
+        .mouseZoomable(true)
+        .yAxis().ticks(20);
+ 
+    // timeChart
+    //     .width(1500)
+    //     .height(600)
+    //     .x(d3.time.scale().domain([minDate, maxDate]))
+    //     .interpolate('basis')
+    //     .renderArea(true)
+    //     .brushOn(false)
+    //     .elasticY(true)
+    //     .renderDataPoints(true)
+    //     .clipPadding(10)
+    //     .yAxisLabel("Daily Tweets")
+    //     .transitionDuration(500)
+    //     .xAxisLabel("Date")
+    //     .dimension(dateDim)
+    //     .group(numTweetsByDate)
+    //     .mouseZoomable(true);
 
     // timeChart
     //     .width(1500)
     //     .height(600)
     //     .x(d3.scale.ordinal())
     //     .xUnits(dc.units.ordinal)
-    //     .brushOn(false)
+    //     .brushOn(true)
     //     .xAxisLabel('Date')
     //     .yAxisLabel('Quantity')
     //     .dimension(dateDim)
     //     .group(numTweetsByDate)
     //     .mouseZoomable(true);
+    
+    // moveChart
+    //     .width(1500)
+    //     .height(600)
+    //     .transitionDuration(1000)
+    //     .margins({top: 30, right: 50, bottom: 25, left: 60})
+    //     .dimension(moveMonths)
+    //     .mouseZoomable(true)
+    //     .shareTitle(false)
+    //     .x(d3.time.scale().domain([minDate, maxDate]))
+    //     .round(d3.time.hour.round)
+    //     .xUnits(d3.time.hour)
+    //     .elasticY(true)
+    //     .renderHorizontalGridLines(true)
+    //     .legend(dc.legend().x(70).y(10).itemHeight(13).gap(5))
+    //     .brushOn(false)
+    //     .compose([
+    //         dc.lineChart(moveChart)
+    //         .group(numTweetsByDate, "Monthly Index Average")
+    //         .valueAccessor(function (d) {
+    //             return d.value.avg;
+    //         }),
+    //         dc.lineChart(moveChart)
+    //         .group(monthlyMoveGroup, "Monthly Index Move")
+    //         .valueAccessor(function (d) {
+    //             return Math.sqrt(d.value);
+    //         })
+    //         .title(function (d) {
+    //             var value = d.value.avg ? d.value.avg : d.value;
+    //             if (isNaN(value)) value = 0;
+    //                 return dateFormat(d.key) + "\n" + numberFormat(value);
+    //             })
+    //             .ordinalColors(["orange"])
+    //             .useRightYAxis(true)
+    //         ])
+    //     .yAxisLabel("Monthly Index Average")
+    //     .rightYAxisLabel("Monthly Index Move")
+    //     .renderHorizontalGridLines(true);
+
+    hasHashtagChart
+       .height(220)
+       .radius(90)
+       .innerRadius(20)
+       .transitionDuration(1500)
+       .dimension(hasHashtagDim)
+       .group(numHasHashtag);
 
    dc.renderAll();
 }

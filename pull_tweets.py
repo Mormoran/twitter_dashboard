@@ -8,7 +8,10 @@ import tweepy
 import json
 
 #Twitter API credentials
-SECRET
+CONSUMER_KEY = 'xz6iX3TdkL2TFmmrSXvARvJkn'
+CONSUMER_SECRET = '71na1NQVNzwibLQso6S3A1mIxs8LD5Uqzu3me1wCLoTmUFlnva'
+ACCESS_TOKEN = '381284132-3TSKLn9rAixDNYJOEvUQXa46Sww238zkkpvRCBZZ'
+ACCESS_TOKEN_SECRET = 'M1kWjy6Ed8vzqW8g9tGieOecEbGbkxgquKlskdj1dpuMW'
 
 class TwitterHarvester(object):
     """Create a new TwitterHarvester instance"""
@@ -68,17 +71,13 @@ def twitter_logic(user_name):
         collection.update_many({'entities.hashtags': {'$not': {'$size': 0}}}, {'$set': {'has_hashtags': True}})
         collection.update_many({'entities.hashtags': {'$size': 0}}, {'$set': {'has_hashtags': False}})
 
+        collection.update_many({'retweeted_status': {'$exists': True}}, {'$set': {'is_retweet': True}})
+        collection.update_many({'retweeted_status': {'$exists': False}}, {'$set': {'is_retweet': False}})
+
         # if collection.find({'entities.hashtags[0].text': True}):
-        #     collection.update_one({'entities.hashtags[0].text': tweet['id']}, {'$set': {'retweet_count': tweet['retweet_count'], 'favorite_count': tweet['favorite_count'], 'favorited': tweet['favorited'], 'retweeted': tweet['retweeted']}}, upsert=False)
-
-        # db.getCollection('gabyguedezh').updateMany({'entities.hashtags': {$not: {$size: 0}}}, {$set: {has_hashtags: true}})
-        # db.getCollection('gabyguedezh').updateMany({'entities.hashtags': {$size: 0}}, {$set: {has_hashtags: false}})
-
-        # collection.update_many({'id'}, {'$all'}, upsert=True)
-        # collection.update_many({'id'}, {}, upsert=True)
-        # collection.update_many({'id': tweet['id']},{$inc: retweeted_count}, upsert=True)
-        # db.user_name.update_one({'_id': p['_id']}, {'$inc': {'d.a': 1}}, upsert=True)
+        for i in collection.find({'entities.hashtags[i].text': True}):
+            collection.update_one({'id': tweet['id']}, {'$set': {'hashtag_i': tweet['entities.hashtags[i].text']}})
 
 if __name__ == "__main__":
-    user_name = input('Please enter the name Twitter handle you want to parse (Please wait a moment while we parse all tweets): ')
+    user_name = input('Please enter the Twitter handle you want to parse (Wait a moment while we parse all tweets): ')
     twitter_logic(user_name.lower())
