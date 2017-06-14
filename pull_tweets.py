@@ -1,11 +1,14 @@
 # Obtained from https://gist.github.com/MihaiTabara/631ecb98f93046a9a454
 
-# script to download up to <= 3200 (the official API limit) of most recent tweets from a user's timeline
+# Script to download up to <= 3200 (the official API limit) of most recent tweets from a user's timeline
 
 
 from pymongo import MongoClient
+from flatten_json import flatten
+from bson import json_util
 import tweepy
 import json
+
 
 #Twitter API credentials
 CONSUMER_KEY = 'xz6iX3TdkL2TFmmrSXvARvJkn'
@@ -50,6 +53,38 @@ def twitter_logic(user_name):
     # Use the cursor to skip the handling of the pagination mechanism 
     # http://docs.tweepy.org/en/latest/cursor_tutorial.html
     tweets = tweepy.Cursor(api.user_timeline, screen_name=user_name).items()
+
+    # for tweet in tweets:
+
+    #     thistweet = {
+    #         'id': tweet.id,
+    #         'created_at': str(tweet.created_at),
+    #         # 'created_at': strptime(tweet.created_at, format),
+    #         'text': tweet.text,
+    #         'entities': tweet.entities,
+    #         'geo': tweet.geo,
+    #         'coordinates': tweet.coordinates,
+    #         # 'place': tweet['place'],
+    #         'retweet_count': tweet.retweet_count,
+    #         'favorite_count': tweet.favorite_count,
+    #         'favorited': tweet.favorited,
+    #         'retweeted': tweet.retweeted
+    #     }
+
+    #     thistweet = flatten(thistweet)
+
+    #     # hashtags = [ht['text'] for ht in tweet.entities['hashtags']]
+    #     # hashtagsStr = ",".join(hashtags)
+    #     # thistweet['hashtags'] = hashtagsStr
+
+    #     jsoned_data = json.dumps(thistweet)
+    #     jsoned_tweet = json.loads(jsoned_data)
+
+    #     if collection.find({'id': thistweet['id']}).count() == 0:
+    #         collection.insert(jsoned_tweet)
+    #     else:
+    #         collection.update_one({'id': thistweet['id']}, {'$set': {'retweet_count': thistweet['retweet_count'], 'favorite_count': thistweet['favorite_count'], 'favorited': thistweet['favorited'], 'retweeted': thistweet['retweeted']}}, upsert=False)
+
     while True:
 
         # As long as I still have a tweet to grab
@@ -62,21 +97,25 @@ def twitter_logic(user_name):
         jsoned_data = json.dumps(data._json)
         tweet = json.loads(jsoned_data)
 
+        tweet = flatten(tweet)
+
+        print(tweet['text'])
+
         # Insert the information in the database
         if collection.find({'id': tweet['id']}).count() == 0:
             collection.insert(tweet)
+            collection.update_many({'entities_hashtags_0_text': {'$exists': True}}, {'$set': {'has_hashtags': True}})
+            collection.update_many({'entities_hashtags_0_text': {'$exists': False}}, {'$set': {'has_hashtags': False}})
+
+            collection.update_many({'retweeted_status_id': {'$exists': True}}, {'$set': {'is_retweet': True}})
+            collection.update_many({'retweeted_status_id': {'$exists': False}}, {'$set': {'is_retweet': False}})
         else:
-            collection.update_one({'id': tweet['id']}, {'$set': {'retweet_count': tweet['retweet_count'], 'favorite_count': tweet['favorite_count'], 'favorited': tweet['favorited'], 'retweeted': tweet['retweeted']}}, upsert=False)
-
-        collection.update_many({'entities.hashtags': {'$not': {'$size': 0}}}, {'$set': {'has_hashtags': True}})
-        collection.update_many({'entities.hashtags': {'$size': 0}}, {'$set': {'has_hashtags': False}})
-
-        collection.update_many({'retweeted_status': {'$exists': True}}, {'$set': {'is_retweet': True}})
-        collection.update_many({'retweeted_status': {'$exists': False}}, {'$set': {'is_retweet': False}})
+            collection.update_one({'id': tweet['id']}, {'$set': {'retweet_count': tweet['retweet_count'], 'favorite_count': tweet['favorite_count'], 'favorited': tweet['favorited'], 'retweeted': tweet['retweeted']}}, upsert=False)       
 
         # if collection.find({'entities.hashtags[0].text': True}):
-        for i in collection.find({'entities.hashtags[i].text': True}):
-            collection.update_one({'id': tweet['id']}, {'$set': {'hashtag_i': tweet['entities.hashtags[i].text']}})
+        # for i in collection.find({'entities.hashtags[i].text': True}):
+        #     print({collection.entities.hashtags[i]['text']})
+            # collection.update_one({'id': tweet['id']}, {'$set': {'hashtag_i': tweet['entities.hashtags[i].text']}})
 
 if __name__ == "__main__":
     user_name = input('Please enter the Twitter handle you want to parse (Wait a moment while we parse all tweets): ')

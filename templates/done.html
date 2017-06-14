@@ -17,22 +17,52 @@
     </div>
     <div  id="outer" class="container-fluid">
         <div class="row">
-            <div class="col-sm-8">
-                <h1>Thank you for your data {{args}}!</h1>
+            <div class="col-sm-6 col-md-offset-4">
+                <h1>Showing data for {{args}}</h1>
+                <form action="" method="GET">
+                    <span>Change dataset: </span>
+                    <select id="choose-collection">
+                        <!-- {% for collections in twitter_db %}
+                            <option value="collections">collection.user_screen_name</option>
+                        {% endfor %} -->   
+                        <option selected="selected" value="gabyguedezh">gabyguedezh</option>
+                        <option value="richardadalton">richardadalton</option>
+                        <option value="andyindublin">andyindublin</option>
+                        <option value="brycemlanders">brycemlanders</option>
+                        <option value="thetaste_ie">thetaste_ie</option>
+                        <option value="schwarzenegger">schwarzenegger</option>
+                    </select>
+                    <span><a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a></span>
+                </form>
             </div>
         </div>
     </div>
-    <div class="col-sm-12">
-        <div class="chart-wrapper">
-            <div class="chart-title">
-                Tweets Per Hour (Zoomable)
-            </div>
-            <div class="chart-stage">
-                <div id="time-chart"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12">
+
+    <hr>
+
+    <div class="container padding_top col-sm-12">
+		<div class="panel panel-default inner_div">
+			<div class="panel-heading">
+				<h3 class="panel-title text-center">
+					<a data-toggle="collapse" href="#collapseOne">
+						Tweets by date (Zoomable)
+					</a>
+				</h3>
+			</div>
+			<div id="collapseOne" class="panel-collapse collapse inner_div">
+				<div class="panel-body">
+					<div class="chart-stage">
+                        <div id="time-chart"></div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+    <div class="col-sm-2">
         <div class="chart-wrapper">
             <div class="chart-title">
                 Total Hashtags
@@ -42,6 +72,27 @@
             </div>
         </div>
     </div>
+    <div class="col-sm-2">
+        <div class="chart-wrapper">
+            <div class="chart-title">
+                Original content vs retweets
+            </div>
+            <div class="chart-stage">
+                <div id="unique-tweets-pie"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="chart-wrapper">
+            <div class="chart-title">
+                Original content vs retweets
+            </div>
+            <div class="chart-stage">
+                <div id="unique-tweets-chart"></div>
+            </div>
+        </div>
+    </div>
+    
     <script src="{{ url_for ('static', filename='lib/js/jquery.min.js')}}"></script>
     <script src="{{ url_for ('static', filename='lib/js/bootstrap.min.js')}}"></script>
     <script src="{{ url_for ('static', filename='lib/js/crossfilter.js')}}"></script>
@@ -51,6 +102,7 @@
     <script src="{{ url_for ('static', filename='lib/js/keen.min.js')}}"></script>
     <script src="{{ url_for ('static', filename='lib/js/moment.js')}}"></script>
     <script src="{{ url_for ('static', filename='js/graph.js')}}"></script>
+    <script src="{{ url_for ('static', filename='js/selection.js')}}"></script>
     <script>getData('{{args}}')</script>
 </body>
 </html>

@@ -44,16 +44,23 @@ def tweetdata(scr):
     # A constant that defines the record fields that we wish to retrieve.
     FIELDS = {
         '_id': False,
+        'id_str': True, # ID number of the tweet in Str type, to form complete tweet url: "https://twitter.com/" + scr + "/status/" + id_str
         'created_at': True,
         'text': True,
-        'source': True,
+        'entities_urls_0_expanded_url': True,
         'in_reply_to_screen_name': True,
+        'user_screen_name': True,
         'geo': True,
         'coordinates': True,
         'place': True,
         'retweet_count': True,
         'favorite_count': True,
-        'has_hashtags': True
+        'has_hashtags': True,
+        'is_retweet': True,
+        'entities_hashtags_0_text': True,
+        'entities_hashtags_1_text': True,
+        'entities_hashtags_2_text': True,
+        'entities_hashtags_3_text': True
     }
 
     # Open a connection to MongoDB using a with statement such that the
