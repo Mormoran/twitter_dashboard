@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from pymongo import MongoClient
 import json
 from pull_tweets import twitter_logic
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def index():
@@ -27,7 +28,7 @@ def get_tweets():
 
 @app.route("/show_tweets/<user>")
 def show_tweets(user):
-    return render_template("done.html", args=user)
+    return render_template("done.html", args=user, coll=session['collections'])
 
 
 @app.route("/tweetdata/<scr>")
@@ -67,6 +68,12 @@ def tweetdata(scr):
     # connection will be closed as soon as we exit the with statement
     with MongoClient(MONGODB_HOST, MONGODB_PORT) as conn:
 
+        db_connect = conn
+        database = db_connect[DBS_NAME]
+        collections = database.collection_names(include_system_collections=False)
+        # sort collection alphabetically here
+        session['collections'] = collections
+
         # Define which collection we wish to access
         collection = conn[DBS_NAME][COLLECTION_NAME]
 
@@ -80,4 +87,6 @@ def tweetdata(scr):
 
 
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
     app.run(debug=True)
