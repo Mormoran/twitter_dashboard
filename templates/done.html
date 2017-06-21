@@ -11,7 +11,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="pieChart">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a href="./" class="navbar-brand">Twitter Dashboard</a>
+                <a href="/" class="navbar-brand">Twitter Dashboard</a>
             </div>
         </div>
     </div>
@@ -23,21 +23,15 @@
                     <span>Change dataset: </span>
                     <select id="choose-collection">
                         {% for i in coll %}
-                            
-                            <option value="{{i}}">{{i}}</option>
-                            
+                            {% if i == args %}
+                                <option selected value="{{i}}">{{i}}</option>
+                            {% else %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endif %}
                         {% endfor %}
-                        <!-- <option value="gabyguedezh">gabyguedezh</option>
-                        <option value="richardadalton">richardadalton</option>
-                        <option value="andyindublin">andyindublin</option>
-                        <option value="brycemlanders">brycemlanders</option>
-                        <option value="thetaste_ie">thetaste_ie</option>
-                        <option value="schwarzenegger">schwarzenegger</option> -->
                     </select>
                     <span><a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a></span>
                     <p></p>
-                    <!-- <span>Good retweets<input type="number" id="success_retweets"></span>
-                    <span>Good favorites<input type="number" id="success_favorites"></span> -->
                 </form>
             </div>
         </div>
@@ -125,6 +119,16 @@
                             </div>
                             <div class="chart-stage">
                                 <div id="tweets-by-period-of-day"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="chart-wrapper">
+                            <div class="chart-title">
+                                Total Tweets
+                            </div>
+                            <div class="chart-stage">
+                                <div id="total-tweets"></div>
                             </div>
                         </div>
                     </div>

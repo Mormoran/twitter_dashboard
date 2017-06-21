@@ -1,4 +1,5 @@
 # Obtained from https://gist.github.com/MihaiTabara/631ecb98f93046a9a454
+# Modified by Andres Correa with help from Richard Dalton
 
 # Script to download up to <= 3200 (the official API limit) of most recent tweets from a user's timeline
 
@@ -110,12 +111,7 @@ def twitter_logic(user_name):
             collection.update_many({'retweeted_status_id': {'$exists': True}}, {'$set': {'is_retweet': True}})
             collection.update_many({'retweeted_status_id': {'$exists': False}}, {'$set': {'is_retweet': False}})
         else:
-            collection.update_one({'id': tweet['id']}, {'$set': {'retweet_count': tweet['retweet_count'], 'favorite_count': tweet['favorite_count'], 'favorited': tweet['favorited'], 'retweeted': tweet['retweeted']}}, upsert=False)       
-
-        # if collection.find({'entities.hashtags[0].text': True}):
-        # for i in collection.find({'entities.hashtags[i].text': True}):
-        #     print({collection.entities.hashtags[i]['text']})
-            # collection.update_one({'id': tweet['id']}, {'$set': {'hashtag_i': tweet['entities.hashtags[i].text']}})
+            collection.update_one({'id': tweet['id']}, {'$set': {'retweet_count': tweet['retweet_count'], 'favorite_count': tweet['favorite_count'], 'favorited': tweet['favorited'], 'retweeted': tweet['retweeted']}}, upsert=False)
 
 if __name__ == "__main__":
     user_name = input('Please enter the Twitter handle you want to parse (Wait a moment while we parse all tweets): ')

@@ -54,7 +54,6 @@ function makeGraphs(error, tweetsJson) {
      
     all_tweets.forEach(function (d) {
         d["created_at"] = dateFormat.parse(d["created_at"]);
-        // var new_time = timeOfDay(d["created_at"]);
         d["created_at"].setSeconds(0);
         d["created_at"].setMinutes(0);
         return d;
@@ -74,6 +73,11 @@ function makeGraphs(error, tweetsJson) {
 
 
     // Define Dimensions
+
+    // Dimension to total all tweets
+    // var allTweetsDim = ndx.dimension(function (d){
+    //     return length.d
+    // });
 
     // Dimension by date
     var dateDim = ndx.dimension(function (d) {
@@ -168,6 +172,7 @@ function makeGraphs(error, tweetsJson) {
     var dayOfWeekPie = dc.pieChart("#tweets-by-day-of-week");
     var periodOfDayPie = dc.pieChart("#tweets-by-period-of-day");
     var scatterTweets = dc.scatterPlot("#scatter-Tweets-by-period-of-day");
+    var totalTweetsDisplay = dc.numberDisplay("#total-tweets");
 
     // Define chart properties
 
@@ -284,6 +289,13 @@ function makeGraphs(error, tweetsJson) {
         .clipPadding(10)
         .dimension(dateDim)
         .group(numTweetsByDate);
+
+    totalTweetsDisplay
+       .formatNumber(d3.format("d"))
+       .valueAccessor(function (d) {
+           return d;
+       })
+       .group(all);
 
    dc.renderAll();
 }

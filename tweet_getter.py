@@ -71,7 +71,11 @@ def tweetdata(scr):
         db_connect = conn
         database = db_connect[DBS_NAME]
         collections = database.collection_names(include_system_collections=False)
-        # sort collection alphabetically here
+
+        # Sort collection alphabetically
+        collections = sorted(collections)
+
+        # Initialize a Flask session to make mollections available to all routes
         session['collections'] = collections
 
         # Define which collection we wish to access
