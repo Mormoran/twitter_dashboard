@@ -100,7 +100,7 @@ def twitter_logic(user_name):
 
         tweet = flatten(tweet)
 
-        print(tweet['text'])
+        print(tweet['user_screen_name'] + " - " + tweet['created_at'] + ": " + tweet['text'])
 
         # Insert the information in the database
         if collection.find({'id': tweet['id']}).count() == 0:

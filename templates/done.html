@@ -30,9 +30,19 @@
                             {% endif %}
                         {% endfor %}
                     </select>
-                    <span><a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a></span>
+                    <span><a href="javascript:dc.filterAll(); dc.renderAll(); dc.redrawAll(); dc.refocusAll();">Reset All</a></span>
                     <p></p>
                 </form>
+            </div>
+            <div class="col-md-1">
+                <div class="chart-wrapper">
+                    <div class="chart-title">
+                        Total Tweets
+                    </div>
+                    <div class="chart-stage">
+                        <div id="total-tweets"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -42,11 +52,11 @@
     <div class="container padding_top col-sm-12">
 		<div class="panel panel-default inner_div">
 			<div class="panel-heading">
-				<h3 class="panel-title text-center" data-toggle="collapse" href="#collapseOne">
+				<h3 class="panel-title text-center">
 						Tweets by date (Zoomable)
 				</h3>
 			</div>
-			<div id="collapseOne" class="panel-collapse collapse inner_div">
+			<div>
 				<div class="panel-body">
 					<div class="chart-stage">
                         <div id="time-chart"></div>
@@ -59,11 +69,11 @@
     <div class="container padding_top col-sm-12">
 		<div class="panel panel-default inner_div">
 			<div class="panel-heading">
-				<h3 class="panel-title text-center" data-toggle="collapse" href="#collapseTwo">
+				<h3 class="panel-title text-center">
 						Original content vs retweets by Date (Zoomable)
 				</h3>
 			</div>
-			<div id="collapseTwo" class="panel-collapse collapse inner_div">
+			<div>
 				<div class="panel-body">
 					<div class="chart-stage">
                         <div id="unique-tweets-chart"></div>
@@ -76,11 +86,11 @@
     <div class="container padding_top col-sm-12">
 		<div class="panel panel-default inner_div">
 			<div class="panel-heading">
-				<h3 class="panel-title text-center" data-toggle="collapse" href="#collapseThree">
+				<h3 class="panel-title text-center">
 						Pie Charts
 				</h3>
 			</div>
-			<div id="collapseThree" class="panel-collapse collapse inner_div">
+			<div>
 				<div class="panel-body">
 					<div class="col-sm-2">
                         <div class="chart-wrapper">
@@ -122,16 +132,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-1">
-                        <div class="chart-wrapper">
-                            <div class="chart-title">
-                                Total Tweets
-                            </div>
-                            <div class="chart-stage">
-                                <div id="total-tweets"></div>
-                            </div>
-                        </div>
-                    </div>
 				</div>
 			</div>
 		</div>
@@ -140,11 +140,11 @@
     <div class="container padding_top col-sm-12">
 		<div class="panel panel-default inner_div">
 			<div class="panel-heading">
-				<h3 class="panel-title text-center" data-toggle="collapse" href="#collapseFour">
+				<h3 class="panel-title text-center">
 						Scatter Plot by Period of Day (Zoomable)
 				</h3>
 			</div>
-			<div id="collapseFour" class="panel-collapse collapse inner_div">
+			<div>
 				<div class="panel-body">
 					<div class="chart-stage">
                         <div id="scatter-Tweets-by-period-of-day"></div>

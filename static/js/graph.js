@@ -6,15 +6,6 @@ function getData(screen_name) {
 // Define days of the week for access in several charts
 week_day = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-// Calculate dimensions for charts
-    var chartWidth = $("#pieChart").width();
-    var pieRadius = 200;
-    if (chartWidth >= 480) {
-            pieRadius = 200;
-        } else {
-            pieRadius = chartWidth * 0.3;
-        }
-
 // Average tweets per day
 // Average tweets per day of the week 
 // 10 most common words 
@@ -26,6 +17,14 @@ week_day = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 // JQuery selection for collections in database
 // Catch 404 for handles that don't exist
 // Make accounts (Django?) to handle user sets (name db as user name in Django?)
+// Top users (and display their followers)
+// Compare 2 accounts side-by-side (draw tables twice using different datasets)
+
+
+// There are 86400 seconds in a day. Get a tweet date object and calculate which second of the day it was posted on
+function secondsInADay(time) {
+    return time.getHours()*3600+time.getMinutes()*60+time.getSeconds();
+}
 
 
 function timeOfDay(time) {
@@ -53,12 +52,16 @@ function makeGraphs(error, tweetsJson) {
     var dateFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
      
     all_tweets.forEach(function (d) {
+        d["created_hour"] = dateFormat.parse(d["created_at"]);
+        d["created_hour"].setSeconds(0);
+        d["created_hour"].setMinutes(0);
+
         d["created_at"] = dateFormat.parse(d["created_at"]);
-        d["created_at"].setSeconds(0);
-        d["created_at"].setMinutes(0);
         return d;
         // d["created_at"].setHours(0);
     });
+
+
 
     // Create a Crossfilter instance. This will aid in filtering your charts.
     // When you click on a particular chart element, all other charts accomodate 
@@ -66,18 +69,12 @@ function makeGraphs(error, tweetsJson) {
     var ndx = crossfilter(all_tweets);
 
 
-
-
-
+    // Counts and groups all tweets in the database
+    var all = ndx.groupAll();
 
 
 
     // Define Dimensions
-
-    // Dimension to total all tweets
-    // var allTweetsDim = ndx.dimension(function (d){
-    //     return length.d
-    // });
 
     // Dimension by date
     var dateDim = ndx.dimension(function (d) {
@@ -114,8 +111,14 @@ function makeGraphs(error, tweetsJson) {
         return d["is_retweet"];
     });
 
+    // Dimension by date and hour, for the scatter plot
+    var tweetsByDateAndHourDim = ndx.dimension(function (d) {
+        console.log(d["created_at"])
+        console.log(secondsInADay(d["created_at"]));
+        return [d["created_at"], secondsInADay(d["created_at"])];
+    })
 
-
+    var tweetsByDateAndHourGroup = tweetsByDateAndHourDim.group();
 
 
 
@@ -155,16 +158,42 @@ function makeGraphs(error, tweetsJson) {
 
     // Groups all tweets by period of day (morning, afternoon, evening, late night)
     var numTweetsByPeriod = periodDim.group();
+
+    // Groups all tweets by average of tweets per day
+    var numTweetsPerDay = dayDim.group().reduce(
+            function (p, v) {
+                ++p.count;
+                p.total += v.spend;
+                p.average = p.total / p.count;
+                return p;
+            },
+            function (p, v) {
+                --p.count;
+                if(p.count == 0) {
+                    p.total = 0;
+                    p.average = 0;
+                } else {
+                    p.total -= v.spend;
+                    p.average = p.total / p.count;
+                };
+                return p;
+            },
+            function () {
+                return {count: 0, total: 0, average: 0};
+            }
+        );
+
+
  
-    var all = ndx.groupAll();
- 
-    //Define values (to be used in charts)
+    // Define values (to be used in charts)
     var minDate = dateDim.bottom(1)[0]["created_at"];
     var maxDate = dateDim.top(1)[0]["created_at"];
     var topfavorites = faveDim.top(10)[0]["favorite_count"];
     var topretweets = retweetDim.top(10)[0]["retweet_count"];
 
-    //Declare charts with apropriate #IDs that go to the HTML section
+
+
+    // Declare charts with apropriate #IDs that go to the HTML section
     var timeChart = dc.lineChart("#time-chart");
     var hasHashtagChart = dc.pieChart("#hashtag-pie-chart");
     var uniqueTweetsPie = dc.pieChart("#unique-tweets-pie");
@@ -174,10 +203,12 @@ function makeGraphs(error, tweetsJson) {
     var scatterTweets = dc.scatterPlot("#scatter-Tweets-by-period-of-day");
     var totalTweetsDisplay = dc.numberDisplay("#total-tweets");
 
+
+
     // Define chart properties
 
     timeChart
-        .width(1850)
+        .width(1800)
         .height(400)
         .x(d3.time.scale().domain([minDate, maxDate]))
         .interpolate('linear')
@@ -185,7 +216,7 @@ function makeGraphs(error, tweetsJson) {
         .round(d3.time.month.round)
         .brushOn(false)
         .elasticY(true)
-        .renderDataPoints(false)
+        .renderDataPoints(true)
         .renderHorizontalGridLines(true)
         .mouseZoomable(true)
         .clipPadding(10)
@@ -258,7 +289,7 @@ function makeGraphs(error, tweetsJson) {
         .group(numTweetsByPeriod);
 
     uniqueTweetsChart
-        .width(1850)
+        .width(1800)
         .height(400)
         .x(d3.time.scale().domain([minDate, maxDate]))
         .mouseZoomable(true)
@@ -271,10 +302,12 @@ function makeGraphs(error, tweetsJson) {
             dc.lineChart(uniqueTweetsChart)
                 .dimension(dateDim)
                 .colors('green')
+                .renderDataPoints(true)
                 .group(numIsRetweet, 'Retweets'),
             dc.lineChart(uniqueTweetsChart)
                 .dimension(dateDim)
                 .colors('blue')
+                .renderDataPoints(true)
                 .group(numIsOriginal, 'Originals')
         ])
         .brushOn(false);
@@ -284,11 +317,13 @@ function makeGraphs(error, tweetsJson) {
         .height(400)
         .x(d3.time.scale().domain([minDate, maxDate]))
         .brushOn(false)
-        .mouseZoomable(true)
+        // .mouseZoomable(true)
+        .clipPadding(5)
+        .yAxisLabel("Hour of the day")
         .symbolSize(8)
-        .clipPadding(10)
-        .dimension(dateDim)
-        .group(numTweetsByDate);
+        .elasticY(true)
+        .dimension(tweetsByDateAndHourDim)
+        .group(tweetsByDateAndHourGroup);
 
     totalTweetsDisplay
        .formatNumber(d3.format("d"))
